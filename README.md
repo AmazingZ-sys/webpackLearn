@@ -20,7 +20,7 @@
 
 新建一个空文件夹，初始化`npm`
 
-```
+```javascript
 // npm
 npm init
 // yarn
@@ -29,7 +29,7 @@ yarn init
 
 `webpack`是运行在`node`环境中的，我们需要安装一下两个包
 
-```
+```javascript
 // npm
 npm i -D webpack webpack-cli
 // yarn
@@ -38,13 +38,13 @@ yarn add -D webpack wbpack-cli
 
 新绛一个文件夹`src`,然后新建一个文件`main.js`，写一点代码进行测试
 
-```
+```javascript
 console.log("我在学习webpack");
 ```
 
 配置`package.json`命令
 
-```
+```javascript
 // 运行 yarn run build 命令时将会找到 src 目录下的 main.js 当做入口文件进行打包操作
 "scripts": {
     "build": "webpack src/main.js"
@@ -53,7 +53,7 @@ console.log("我在学习webpack");
 
 执行
 
-```
+```javascript
 // npm
 npm run build
 // yarn 
@@ -68,7 +68,7 @@ yarn run build
 
 上面的一个简单示例只是`webpack`默认的配置，在开发中往往我们需要自定义一些配置，新建一个`build`文件夹，里面新建一个`webpack.config.js`文件
 
-```
+```javascript
 // webpack.config.js
 
 const path = require('path');
@@ -89,7 +89,7 @@ module.exports = {
 
 更改我们的命令为
 
-```
+```javascript
 "scripts": {
     "build": "webpack --config build/webpack.config.js"
 },
@@ -97,7 +97,7 @@ module.exports = {
 
 执行
 
-```
+```javascript
 // npm 
 npm run build
 // yarn
@@ -114,7 +114,7 @@ js文件打包完成，但是我们不能每次都在相应的`html`模板中手
 
 > 有的老板对这里的可能会有疑问，我们打包好的js文件名不都是一样的吗？不是引入一次就行了吗？然而我们在开发中为了避免浏览器缓存导致页面更新不及时，往往会这样配置
 
-```
+```javascript
 // 这里的 [name] 为你的文件名称，如入口文件名为main.js [name] 就为main
 // 而[hash:8] 表示在文件名之后加上8位的 hash 值，此时你每次打包之后的文件名都是不一样的
 module.exports = {
@@ -134,7 +134,7 @@ module.exports = {
 
 安装`html-webpack-plugin`
 
-```
+```javascript
 // npm 
 npm i -D html-webpack-plugin
 // yarn 
@@ -143,7 +143,7 @@ yarn add -D html-webpack-plugin
 
 新建一个与`build`同级的文件夹`public`，在里面新建一个`index.html`，然后修改配置文件`webpack.config.js`
 
-```
+```javascript
 // webpack.config.js
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -170,7 +170,7 @@ module.exports = {
 
 > 生成多个`html-webpack-plugin`实例来解决
 
-```
+```javascript
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 module.exports = {
@@ -227,7 +227,7 @@ module.exports = {
 
 先安装`clean-webpack-plugin`
 
-```
+```javascript
 // npm 
 npm i -D clean-webpack-plugin
 // yarn 
@@ -236,7 +236,7 @@ yarn add -D clean-webpack-plugin
 
 修改配置文件`webpack.config.js`
 
-```
+```javascript
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 module.exports = {
     // ...省略其他配置
@@ -255,7 +255,7 @@ module.exports = {
 
 因为我们引入了`CSS`文件，所以需要一些`loader`来解析我们的`CSS`文件
 
-```
+```javascript
 // npm 
 npm i -D style-loader css-loader less less-loader   // 如果我们使用了less来构建样式，则需要多安装两个，scss/sass同理
 // yarn 
@@ -269,7 +269,7 @@ yarn add -D style-loader css-loader less less-loader
 
 修改配置文件`webpack.config.js`
 
-```
+```javascript
 // webpack.config.js
 module.exports = {
     // ...省略其他配置
@@ -302,7 +302,7 @@ module.exports = {
 
 安装`postcss-loader 和 autoprefixer`
 
-```
+```javascript
 // npm 
 npm i -D postcss-loader autoprefixer
 // yarn 
@@ -311,7 +311,7 @@ yarn add -D postcss-loader autoprefixer
 
 修改配置`webpack.config.js`
 
-```
+```javascript
 // webpack.config.js
 module.exports = {
     module:{
@@ -328,7 +328,7 @@ module.exports = {
 
 修改`package.json`文件（不进行配置可能会添加前缀失败）
 
-```
+```javascript
 {
 	// 忽略其他配置
   "browserslist": [
@@ -344,7 +344,7 @@ module.exports = {
 
 1.在项目跟目录创建一个`postcss.config.js`，配置如下
 
-```
+```javascript
 module.exports = {
     plugins: [require('autoprefixer')]  // 引用该插件即可了
 }
@@ -352,7 +352,7 @@ module.exports = {
 
 2.直接在`webpack.config.js`文件中配置
 
-```
+```javascript
 // webpack.config.js
 module.exports = {
     //...省略其他配置
@@ -376,7 +376,7 @@ module.exports = {
 
 安装`mini-css-extract-plugin`
 
-```
+```javascript
 // npm
 npm i -D mini-css-extract-plugin
 // yarn 
@@ -387,7 +387,7 @@ yarn add -D mini-css-extract-plugin
 
 配置文件如下
 
-```
+```javascript
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
   //...省略其他配置
@@ -425,7 +425,7 @@ module.exports = {
 
 安装：
 
-```
+```javascript
 // npm 
 npm i -D extract-text-webpack-plugin@next
 // yarn
@@ -434,7 +434,7 @@ yarn add -D extract-text-webpack-plugin@next
 
 修改`webpack.config.js`配置
 
-```
+```javascript
 // webpack.config.js
 
 const path = require('path');
@@ -475,7 +475,7 @@ module.exports = {
 
 `url-loader`一般会与`file-loader`搭配使用，功能与`file-loader`类似，如果文件小于限制的大小，则会返回文件的base64编码，否则使用`file-loader`将文件移动到输出目录中
 
-```
+```javascript
 // webpack.config.js
 module.exports = {
   // 省略其它配置 ...
@@ -545,7 +545,7 @@ module.exports = {
 
 安装
 
-```
+```javascript
 // npm 
 npm i -D babel-loader @babel/preset-env @babel/core
 // yarn 
@@ -558,7 +558,7 @@ yarn add -D babel-loader @babel/preset-env @babel/core
 
 修改`webpack.config.js`配置
 
-```
+```javascript
 // webpack.config.js
 module.exports = {
     // 省略其它配置 ...
@@ -597,7 +597,7 @@ module.exports = {
 
 安装
 
-```
+```javascript
 // npm 
 npm i -D @babel/polyfill
 // yarn 
@@ -606,7 +606,7 @@ yarn add -D @babel/polyfill
 
 修改`webpack.config.js`配置
 
-```
+```javascript
 // webpack.config.js
 const path = require('path')
 module.exports = {
@@ -621,7 +621,7 @@ entry: {
 
 `Babel`的配置建议在根目录下新建一个`.babelrc`文件
 
-```
+```javascript
 {
     "presets": [
         "env",
@@ -655,7 +655,7 @@ entry: {
 
 安装
 
-```
+```javascript
 // npm 
 npm i -D vue-loader vue-template-compiler vue-style-loader
 npm i -S vue
@@ -670,7 +670,7 @@ yarn add vue
 
 修改`webpack.config.js`配置
 
-```
+```javascript
 const vueLoaderPlugin = require('vue-loader/lib/plugin')
 module.exports = {
     module:{
@@ -697,7 +697,7 @@ module.exports = {
 
 安装
 
-```
+```javascript
 //npm 
 npm i -D webpack-dev-server
 // yarn 
@@ -856,7 +856,7 @@ module.exports = {
 
 #### 4.1 webpack.config.js
 
-```
+```javascript
 const path = require('path')
 const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
@@ -996,7 +996,7 @@ module.exports = {
 
 #### 4.2 webpack.dev.js
 
-```
+```javascript
 const Webpack = require('webpack')
 const webpackConfig = require('./webpack.config.js')
 const WebpackMerge = require('webpack-merge')
@@ -1039,7 +1039,7 @@ module.exports = WebpackMerge(webpackConfig,{
 
 使用`uglifyjs-webpack-plugin`
 
-```
+```javascript
 const path = require('path')
 const webpackConfig = require('./webpack.config.js')
 const WebpackMerge = require('webpack-merge')
@@ -1082,7 +1082,7 @@ module.exports = WebpackMerge(webpackConfig,{
 
 使用`webpack-parallel-uglify-plugin`
 
-```
+```javascript
 const path = require('path')
 const webpackConfig = require('./webpack.config.js')
 const WebpackMerge = require('webpack-merge')
@@ -1149,7 +1149,7 @@ webpack的优化，关系到打包出来文件的大小，打包的速度等，�
 
 - `extensions`：`webpack`会根据`extensions`定义的后缀查找文件（频率高的文件类型优先写在前面）
 
-  ```
+  ```javascript
   module.exports = {
    // 忽略其他配置
     module:{
@@ -1269,7 +1269,7 @@ webpack的优化，关系到打包出来文件的大小，打包的速度等，�
 
 安装
 
-```
+```javascript
 // npm 
 npm i -D happypack
 // yarn 
@@ -1278,7 +1278,7 @@ yarn add -D happypack
 
 修改`webpack.config.js`配置
 
-```
+```javascript
 const HappyPack = require("happypack")
 const os = require("os")
 const happyThreadPool = HappyPack.ThreadPool({size:os.cpus().length})
@@ -1321,7 +1321,7 @@ module.exports = {
 
 安装
 
-```
+```javascript
 // npm 
 npm i -D webpack-parallel-uglify-plugin
 // yarn 
@@ -1330,7 +1330,7 @@ yarn add -D webpack-parallel-uglify-plugin
 
 修改`webpack.config.js`配置
 
-```
+```javascript
 const HappyPack = require("happypack")
 const os = require("os")
 const happyThreadPool = HappyPack.ThreadPool({size:os.cpus().length})
@@ -1364,7 +1364,7 @@ module.exports = {
 这里我们使用`webpack`内置的`DllPlugin DllReferencePlugin`进行抽离
 在与`webpack`配置文件同级目录下新建`webpack.dll.config.js` 代码如下：
 
-```
+```javascript
 // webpack.dll.config.js
 const path = require("path");
 const webpack = require("webpack");
@@ -1392,13 +1392,13 @@ module.exports = {
 
 在`package.json`中配置如下命令
 
-```
+```javascript
 "dll": "webpack --config build/webpack.dll.config.js"
 ```
 
 接下来我们在`webpack.config.js`中增加配置
 
-```
+```javascript
 module.exports = {
   plugins: [
     new webpack.DllReferencePlugin({

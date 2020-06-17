@@ -99,7 +99,7 @@ module.exports = {
             chunks: ['index'] // 与入口文件对应的模块名
         }),
         new HtmlWebpackPlugin({
-            template: path.resolve(__dirname, '../public/main.html'),
+            template: path.resolve(__dirname, '../pub.gitignorelic/main.html'),
             filename: 'main.html',
             minify: {
                 removeAttributeQuotes: true
