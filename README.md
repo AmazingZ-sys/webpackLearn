@@ -5,6 +5,8 @@
 随着前端的发展，只会傻傻使用脚手架，然后`npm run serve`、`npm run build`显然是不够的，在面试中也常常会有面试官问道会用webpack吗？会自定义进行配置管理吗？学会`webpack`往往能使你在面试中脱颖而出，废话不多说，我们开始走进`webpack`的世界。
 
 > 本文仅供参考，如果错误烦请指正，蟹蟹
+>
+> 项目地址：[GitHub](https://github.com/lz1085266067/webpackLearn)
 
 ## 入门
 
