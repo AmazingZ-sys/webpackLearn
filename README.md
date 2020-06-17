@@ -585,7 +585,7 @@ module.exports = {
 
 修改配置后我们在`main.js`中写入
 
-![image-20200616154049444](/Users/zhix/Library/Application Support/typora-user-images/image-20200616154049444.png)
+![](https://tva1.sinaimg.cn/large/007S8ZIlgy1gfvbpwbf4ij30ze0u0wi5.jpg)
 
 运行打包之后找到打包后的`main.xxxxxxxx.js`文件，打开之后找到我们的`console`
 
