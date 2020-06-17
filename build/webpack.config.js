@@ -101,11 +101,17 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../public/main.html'),
             filename: 'main.html',
+            minify: {
+                removeAttributeQuotes: true
+            },
             chunks: ['main'] // 与入口文件对应的模块名
         }),
         new HtmlWebpackPlugin({
             template: path.resolve(__dirname, '../public/header.html'),
             filename: 'header.html',
+            minify: {
+                removeAttributeQuotes: true
+            },
             chunks: ['header'] // 与入口文件对应的模块名
         }),
     ],

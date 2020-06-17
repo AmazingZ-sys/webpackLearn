@@ -8,6 +8,14 @@
 
 ## 入门
 
+`webpack`可以看成一个模块打包工具，分析目录结构，处理模块化依赖，转换成浏览器“认识”的代码。
+
+- 代码转换：`TypeScript`编译转换成`JavaScript`、`SCSS,LESS,SASS`编译转换成`CSS`
+- 文件优化：压缩`JavaScript`、`CSS`、`HTML`代码，压缩合并图片
+- 代码分割：提取多个页面的公共代码，提取首屏不需要执行的部分代码让其异步加载
+- 模块合并：在采用模块化的项目里会有多个模块和文件，需要构建功能把模块分类合并成一个文件
+- 自动刷新：使用热加载插件，监听本地代码的变化，自动重新构建代码、刷新浏览器
+
 ### 1.初始化项目
 
 新建一个空文件夹，初始化`npm`
@@ -73,6 +81,11 @@ module.exports = {
     }
 }
 ```
+
+- `entry`：入口文件，`webpack`会找到该文件进行解析
+- `output`：输出文件配置
+- `path`：输出文件的位置（要将文件输出到哪个目录）
+- `filename`：输出文件的名字
 
 更改我们的命令为
 
@@ -174,16 +187,35 @@ module.exports = {
       new HtmlWebpackPlugin({
         template:path.resolve(__dirname,'../public/index.html'),
         filename:'index.html',
+        title:"main",
+        hash:true,
+        minify: {
+            removeAttributeQuotes: true
+        }
         chunks:['main'] // 与入口文件对应的模块名
       }),
       new HtmlWebpackPlugin({
         template:path.resolve(__dirname,'../public/header.html'),
         filename:'header.html',
+        title:"header",
+        hash:true,
+        minify: {
+            removeAttributeQuotes: true
+        }
         chunks:['header'] // 与入口文件对应的模块名
       }),
     ]
 }
 ```
+
+多个入口配置：
+
+- `template`：`html`模板的路径地址
+- `filename`：生成的文件名
+- `title`：传入的参数
+- `chunks`：需要引入的chunk
+- `hash`：在引入的JS文件中加入`hash`值（引入时候文件名之后加上`?xxxxxxxxx`）
+- `removeAttributeQuotes`：去掉引号，减少文件大小
 
 执行`npm run build 或者 yarn run build`此时生成的目录和文件如下
 
@@ -230,6 +262,11 @@ npm i -D style-loader css-loader less less-loader   // 如果我们使用了less
 yarn add -D style-loader css-loader less less-loader
 ```
 
+- `css-loader`：支持`css`中的import
+- `style-loader`：把`css`以`style`标签的形式引入到`html`
+- `sass-loader,less-loader,scss-loader`：转译为`css`
+- `node-sass`：`sass`转译依赖，其他预处理语言同理
+
 修改配置文件`webpack.config.js`
 
 ```
@@ -240,16 +277,22 @@ module.exports = {
       rules:[
         {
           test:/\.css$/,
-          use:['style-loader','css-loader'] // 从右向左解析原则
+          use:['style-loader','css-loader'], // 从右向左解析原则
+          exclude: /node_modules/
         },
         {
           test:/\.less$/,
-          use:['style-loader','css-loader','less-loader'] // 从右向左解析原则
+          use:['style-loader','css-loader','less-loader'], // 从右向左解析原则
+          exclude: /node_modules/
         }
       ]
     }
 } 
 ```
+
+- `test`：一个正则表达式，匹配文件名
+- `use`：一个数组，里面放入需要执行的`loader`，从右往左解析
+- `exclude`：取消匹配`node_modules`里面的文件
 
 此时浏览器打开`index.html`可以看到`CSS`以`style`标签的形式嵌入到页面中
 
@@ -280,6 +323,20 @@ module.exports = {
         ]
     }
 } 
+
+```
+
+修改`package.json`文件（不进行配置可能会添加前缀失败）
+
+```
+{
+	// 忽略其他配置
+  "browserslist": [
+    "last 1 version",
+    "> 1%",
+    "IE 10"
+  ],
+}
 
 ```
 
@@ -561,6 +618,32 @@ entry: {
         header:["@babel/polyfill",path.resolve(__dirname,'../src/header.js')],
     },
 ```
+
+`Babel`的配置建议在根目录下新建一个`.babelrc`文件
+
+```
+{
+    "presets": [
+        "env",
+        "stage-0", 
+        "react"
+    ],
+    "plugins": [
+        "transform-runtime",
+        "transform-decorators-legacy",
+        "add-module-exports"
+    ]
+}
+```
+
+- `presets`：预设，一个预设包含多个插件，起到方便作用，不用引用多个文件
+- `env`：只转换新的语法，例如`const,let,()=>`等，不转换如`Promise,Proxy,Generator,Set,Maps,Symbol`等
+- `stage-0`：es7提案转码规则，有0 1 2 3 几个阶段，阶段0包含了所有的
+- `react`：转换`react`的`jsx`语法
+- `plugins`：插件，可以自己开发插件，转换代码（依赖于AST抽象语法树）
+- `transform-runtime`：转换新语法，自动引入`polyfill`插件，另外可以避免污染全局变量
+- `transform-decorators-legacy`：支持装饰器
+- `add-module-exprots`：转译`export default{};`添加上`module.exports = exports.default`支持`commonjs`
 
 > 到现在为止我们对`webpack`有了个初步了解，但是想要熟练运用，我们需要一个系统的实战，开始摆脱脚手架尝试搭建自己的`Vue`项目吧
 
@@ -923,16 +1006,38 @@ module.exports = WebpackMerge(webpackConfig,{
   devServer:{
     port:3000,
     hot:true,
-    contentBase:'../dist'
+    contentBase:'../dist'，
+    host: 'localhost',
+    overlay: true,
+    compress: true,
+    open:true,
+    inline: true,
+    progress: true
   },
+  devtool:"inline-source-map",
   plugins:[
-    new Webpack.HotModuleReplacementPlugin()
+    new Webpack.HotModuleReplacementPlugin(),
+    new webpack.NamedModulesPlugin(),
   ]
 })
 
 ```
 
+- `contentBase`: 静态文件地址
+- `port`: 端口号
+- `host`: 主机
+- `overlay`: 如果出错，则在浏览器中显示出错误
+- `compress`: 服务器返回浏览器的时候是否启动gzip压缩
+- `open`: 打包完成自动打开浏览器
+- `hot`: 模块热替换 需要`webpack.HotModuleReplacementPlugin`插件
+- `inline`: 实时构建
+- `progress`: 显示打包进度
+- `devtool`: 生成代码映射，查看编译前代码，利于找bug
+- `webpack.NamedModulesPlugin`: 显示模块的相对路径
+
 #### 4.3 webpack.prod.js
+
+使用`uglifyjs-webpack-plugin`
 
 ```
 const path = require('path')
@@ -975,15 +1080,58 @@ module.exports = WebpackMerge(webpackConfig,{
 
 ```
 
-### 5.优化webpack配置
+使用`webpack-parallel-uglify-plugin`
+
+```
+const path = require('path')
+const webpackConfig = require('./webpack.config.js')
+const WebpackMerge = require('webpack-merge')
+const WebpackParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
+module.exports = WebpackMerge(webpackConfig,{
+  mode:'production',
+  devtool:'cheap-module-source-map',
+  plugins:[
+    new WebpackParallelUglifyPlugin(
+        {
+            uglifyJS: {
+                mangle: false,
+                output: {
+                    beautify: false,
+                    comments: false
+                },
+                compress: {
+                    warnings: false,
+                    drop_console: true,
+                    collapse_vars: true,
+                    reduce_vars: true
+                }
+            }
+        }
+    ),
+  ],
+})
+```
+
+uglifyJS配置:
+
+- `mangle`: 是否混淆代码
+- `output.beautify`: 代码压缩成一行 true为不压缩 false压缩
+- `output.comments`: 去掉注释
+- `compress.warnings`: 在删除没用到代码时 不输出警告
+- `compress.drop_console`: 删除console
+- `compress.collapse_vars`: 把定义一次的变量，直接使用，取消定义变量
+- `compress.reduce_vars`: 合并多次用到的值，定义成变量
+- [具体文档](https://www.npmjs.com/package/uglify-js)
+
+## 优化webpack配置
 
 webpack的优化，关系到打包出来文件的大小，打包的速度等，我们从以下几个方面对`webpack`进行优化：
 
-#### 5.1 优化打包速度
+### 1 优化打包速度
 
 > 构建速度指的是我们每次修改代码之后热更新的速度和发布前打包文件的速度
 
-##### 5.1.1 合理的配置`mode`参数与`devtool`参数
+#### 1.1 合理的配置`mode`参数与`devtool`参数
 
 `mode` 可设置`development`（开发）和`production`（生产）两个参数
 
@@ -991,7 +1139,7 @@ webpack的优化，关系到打包出来文件的大小，打包的速度等，�
 
 `production`模式下会进行`tree shaking`（去除无用代码）和`uglifyjs`（代码压缩混淆）
 
-##### 5.1.2 缩小文件的搜索范围（配置`include exclude alias noParse extensions`）
+#### 1.2 缩小文件的搜索范围（配置`include exclude alias noParse extensions`）
 
 - `alias`：当我们代码中出现`import vue`时，`webpack`会采用向上递归的方式去`node_modules`目录下去找。为了减少搜索范围我们可以直接告诉`webpack`去哪个路径下查找，也就是`alias`（别名）
 
@@ -1115,7 +1263,7 @@ webpack的优化，关系到打包出来文件的大小，打包的速度等，�
   }
   ```
 
-##### 5.1.3 使用`HappyPack`开启多进程`Loder`转换
+#### 1.3 使用`HappyPack`开启多进程`Loder`转换
 
 > 在`webpack`构建过程中，实际上耗费时间大多数用在`loader`解析转换以及代码的压缩中。日常开发中我们需要使用`loader`对js，图片，字体等文件做转换操作，并且转换的文件数据量也是非常大的。由于js单线程的特性使得这些转换操作不能并发处理，而是需要一个个文件进行处理。`HappyPack`的基本原理是将这部分任务分解到多个子进程中并行处理，子进程处理完成之后把结果发送到主进程中，从而减少构建时间
 
@@ -1167,7 +1315,7 @@ module.exports = {
 }
 ```
 
-##### 5.1.4 使用`webpack-parallel-uglify-plugin`增强代码压缩
+#### 1.4 使用`webpack-parallel-uglify-plugin`增强代码压缩
 
 > 上面已经对`loader`转换进行了优化，还有一个难点就是优化代码的压缩时间
 
@@ -1209,9 +1357,9 @@ module.exports = {
 }
 ```
 
-##### 5.1.5 抽离第三方模块
+#### 1.5 提取第三方模块，DLL动态链接
 
-> 对于开发项目中不经常会变更的静态依赖文件，类似我们的`elementUI、vue全家桶`等等，因为很少会去变更，所以我们不希望这些依赖要被集成到内一次的构建逻辑中去。 这样做的好处是每次更改我本地代码的文件的时候，`webpack`只需要打包我项目本身的文件代码，而不会再去编译第三方库。以后只要我们不升级第三方包的时候，那么`webpack`就不会对这些库去打包，这样可以快速的提高打包的速度。
+> 对于开发项目中不经常会变更的静态依赖文件，因为很少会去变更，所以我们不希望这些依赖要被集成到内一次的构建逻辑中去。以后只要我们不升级第三方包的时候，那么`webpack`就不会对这些库去打包，这样可以快速的提高打包的速度。
 
 这里我们使用`webpack`内置的`DllPlugin DllReferencePlugin`进行抽离
 在与`webpack`配置文件同级目录下新建`webpack.dll.config.js` 代码如下：
@@ -1276,7 +1424,7 @@ module.exports = {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>老yuan</title>
+  <title>Document</title>
   <script src="static/js/vendor.dll.js"></script>
 </head>
 <body>
@@ -1288,7 +1436,5 @@ module.exports = {
 
 这样如果我们没有更新第三方依赖包，就不必执行`npm run dll 或者 yarn run dll`，直接执行`run dev 和 run build`的时候就会发现我们的打包速度明显提升，因为我们已经通过`dllPlugin`将第三方依赖包进行了抽离
 
-##### 5.1.6 配置缓存
 
-> 我们每次执行构建都会把所有文件都重复编译一遍，这样的重复工作是否可以被缓存下来呢？答案是可以的，目前大部分 `loader` 都提供了`cache` 配置项。比如在 `babel-loader` 中，可以通过设置`cacheDirectory` 来开启缓存，`babel-loader?cacheDirectory=true` 就会将每次的编译结果写进硬盘文件（默认是在项目根目录下的`node_modules/.cache/babel-loader`目录内，当然你也可以自定义）
 
