@@ -108,7 +108,7 @@ yarn run build
 
 此时生成了如下文件
 
-![image-20200616101807672](/Users/zhix/Library/Application Support/typora-user-images/image-20200616101807672.png)
+![](https://tva1.sinaimg.cn/large/007S8ZIlgy1gg345d4z9hj30ua0bmdh7.jpg)
 
 ### 3.配置`html`
 
